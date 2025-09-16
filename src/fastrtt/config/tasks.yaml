@@ -1,0 +1,55 @@
+clock_start_task:
+  description: |
+    The following is a letter dictated by a hospital clinician to another clinician, typically a general practitioner. The patient has been referred to a hospital service for assessment and/or treatment. However, this letter may not necessarily indicate that a "clock start event" has occurred as per NHS England RTT guidelines. It may be the first time the patient has been seen in the hospital setting, or it may be a follow-up letter after an initial consultation. The letter may also contain information about the patient's condition, treatment plan, and any further referrals or investigations that may be required.
+    Your task is to determine if the information in this letter qualifies as a "clock start event" based on NHS England guidelines.
+    A clock start event is defined as follows:
+    **1)** A waiting time clock starts when any care professional or service permitted by an English NHS commissioner to make such referrals, refers to:
+      a) a consultant-led service, regardless of setting, with the intention that the patient will be assessed and, if appropriate, treated before responsibility is transferred back to the referring health professional or general practitioner;
+      b) an interface or referral management or assessment service, which may result in an onward referral to a consultant-led service before responsibility is transferred back to the referring health professional or general practitioner.
+
+    **2)** A waiting time clock also starts upon a self-referral by a patient to the above services, where these pathways have been agreed locally by commissioners and providers and once the referral is ratified by a care professional permitted to do so.
+
+    **3)** Upon completion of a consultant-led referral to treatment period, a new waiting time clock only starts:
+      a) when a patient becomes fit and ready for the second of a consultant-led bilateral procedure;
+      b) upon the decision to start a substantively new or different treatment that does not already form part of that patient's agreed care plan;
+      c) upon a patient being re-referred into a consultant-led; interface; or referral management or assessment service as a new referral;
+      d) when a decision to treat is made following a period of active monitoring;
+      e) when a patient rebooks their appointment following a first appointment Did Not Attend (DNA) that stopped and nullified their earlier clock.
+
+    Clinic Letter:
+    {clinic_letter}
+  expected_output: |
+    A clear "Yes" or "No" answer indicating whether the letter qualifies as a clock start event, along with a brief explanation of the reasoning behind the decision.
+    Format your response as markdown without '```'.
+  agent: clock_start_analyst
+clock_stop_task:
+  description: |
+   The following is a letter dictated by a hospital clinician to another clinician, typically a general practitioner. The patient is being seen in a hospital service for assessment and/or treatment. However, this letter may not necessarily indicate that a "clock stop event" has occurred as per NHS England RTT guidelines. It may be the first time the patient has been seen in the hospital setting, or it may be a follow-up letter after a previous initial consultation. The letter may also contain information about the patient's condition, treatment plan, and any further referrals or investigations that may be required.
+    Your task is to determine if the information in this letter qualifies as a "clock stop event" based on NHS England guidelines.
+    **1)** A clock stops when:
+       a) First definitive treatment starts. This could be:
+          i. Treatment provided by an interface service;
+          ii. Treatment provided by a consultant-led service;
+          iii. Therapy or healthcare science intervention provided in secondary care or at an interface service, if this is what the consultant-led or interface service decides is the best way to manage the patient's disease, condition or injury and avoid further interventions;
+       b) A clinical decision is made and has been communicated to the patient, and subsequently their GP and/or other referring practitioner without undue delay, to add a patient to a transplant list.
+
+    **Clock stops for 'non-treatment'**
+
+    **2)** A waiting time clock stops when it is communicated to the patient, and subsequently their GP and/or other referring practitioner without undue delay that:
+       a) It is clinically appropriate to return the patient to primary care for any non consultant-led treatment in primary care;
+       b) A clinical decision is made to start a period of active monitoring;
+       c) A patient declines treatment having been offered it;
+       d) A clinical decision is made not to treat;
+       e) A patient DNAs their first appointment following the initial referral that started their waiting time clock, provided that the provider can demonstrate that the appointment was clearly communicated to the patient¹⁰;
+       f) A patient DNAs any other appointment and is subsequently discharged back to the care of their GP, provided that:
+          i. the provider can demonstrate that the appointment was clearly communicated to the patient;
+          ii. discharging the patient is not contrary to their best clinical interests;
+          iii. discharging the patient is carried out according to local, publicly available/published, policies on DNAs;
+          iv. These local policies are clearly defined and specifically protect the clinical interests of vulnerable patients (e.g. children) and are agreed with clinicians, commissioners, patients and other relevant stakeholders.
+
+    Clinic Letter:
+    {clinic_letter}
+  expected_output: |
+    A clear "Yes" or "No" answer indicating whether the letter qualifies as a clock stop event, along with a brief explanation of the reasoning behind the decision.
+    Format your response as markdown without '```'.
+  agent: clock_stop_analyst
