@@ -9,8 +9,8 @@ becomes a key with a value containing:
 - parent: the immediate parent section heading (based on heading level hierarchy)
 """
 
-import re
 import json
+import re
 from typing import Dict, Optional
 
 
@@ -122,8 +122,8 @@ class MarkdownParser:
 
 def main():
     """Main function to demonstrate usage."""
-    import sys
     import os
+    import sys
 
     if len(sys.argv) > 1:
         file_path = sys.argv[1]

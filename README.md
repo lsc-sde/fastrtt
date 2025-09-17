@@ -1,53 +1,45 @@
-# Fastrtt Crew
+# FastRTT Crew
 
-Welcome to the Fastrtt Crew project, powered by [crewAI](https://crewai.com). This template is designed to help you set up a multi-agent AI system with ease, leveraging the powerful and flexible framework provided by crewAI. Our goal is to enable your agents to collaborate effectively on complex tasks, maximizing their collective intelligence and capabilities.
+Welcome to the FastRTT Crew project, powered by [crewAI](https://crewai.com). This template is designed to help you set up a multi-agent AI system with ease, leveraging the powerful and flexible framework provided by crewAI. Our goal is to enable your agents to collaborate effectively on complex tasks, maximizing their collective intelligence and capabilities.
 
 ## Installation
 
-Ensure you have Python >=3.10 <3.14 installed on your system. This project uses [UV](https://docs.astral.sh/uv/) for dependency management and package handling, offering a seamless setup and execution experience.
+This project requires [`uv`](https://docs.astral.sh/uv/) and [`crewai`](https://www.crewai.com/).
 
-First, if you haven't already, install uv:
-
-```bash
-pip install uv
-```
-
-Next, navigate to your project directory and install the dependencies:
-
-(Optional) Lock the dependencies and install them by using the CLI command:
-```bash
-crewai install
-```
-### Customizing
-
-**Add your `OPENAI_API_KEY` into the `.env` file**
-
-- Modify `src/fastrtt/config/agents.yaml` to define your agents
-- Modify `src/fastrtt/config/tasks.yaml` to define your tasks
-- Modify `src/fastrtt/crew.py` to add your own logic, tools and specific args
-- Modify `src/fastrtt/main.py` to add custom inputs for your agents and tasks
-
-## Running the Project
-
-To kickstart your crew of AI agents and begin task execution, run this from the root folder of your project:
+1. Clone and install dependencies
 
 ```bash
-$ crewai run
+git clone https://github.com/lsc-sde/fastrtt/
+cd fastrtt
+uv sync
+```
+2. Setup environment variables
+
+Copy `sample.env` to a new file called `.env` and fill in the necessary values.
+
+3. Kickoff the crew
+
+```bash
+fastrtt
 ```
 
-This command initializes the fastrtt Crew, assembling the agents and assigning them tasks as defined in your configuration.
+or
 
-This example, unmodified, will run the create a `report.md` file with the output of a research on LLMs in the root folder.
+```bash
+crewai run
+```
 
 ## Understanding Your Crew
 
-The fastrtt Crew is composed of multiple AI agents, each with unique roles, goals, and tools. These agents collaborate on a series of tasks, defined in `config/tasks.yaml`, leveraging their collective skills to achieve complex objectives. The `config/agents.yaml` file outlines the capabilities and configurations of each agent in your crew.
+The FastRTT Crew is composed of multiple AI agents, each with unique roles, goals, and tools. These agents collaborate on a series of tasks, defined in `config/tasks.yaml`, leveraging their collective skills to achieve complex objectives. The `config/agents.yaml` file outlines the capabilities and configurations of each agent in your crew.
 
 ## Support
 
-For support, questions, or feedback regarding the Fastrtt Crew or crewAI.
+For support, questions of feedback regarding FastRTT, please reach out through [Github Issues](https://github.com/lsc-sde/fastrtt/issues) or directly to @vvcb.
+
+For support, questions, or feedback regarding crewAI.
 - Visit our [documentation](https://docs.crewai.com)
-- Reach out to us through our [GitHub repository](https://github.com/joaomdmoura/crewai)
+- Reach out to us through our [GitHub repository](https://github.com/crewAIInc/crewAI)
 - [Join our Discord](https://discord.com/invite/X4JWnZnxPb)
 - [Chat with our docs](https://chatg.pt/DWjSBZn)
 

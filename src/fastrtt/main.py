@@ -1,12 +1,10 @@
 #!/usr/bin/env python
 import sys
 import warnings
-
 from datetime import datetime
 
 from fastrtt.crew import Fastrtt
 from fastrtt.otel import langfuse
-
 
 warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
 
