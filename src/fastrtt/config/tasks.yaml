@@ -1,3 +1,4 @@
+# Clock Start Task
 clock_start_task:
   description: |
     The following is a letter dictated by a hospital clinician to another clinician, typically a general practitioner. The patient has been referred to a hospital service for assessment and/or treatment. However, this letter may not necessarily indicate that a "clock start event" has occurred as per NHS England RTT guidelines. It may be the first time the patient has been seen in the hospital setting, or it may be a follow-up letter after an initial consultation. The letter may also contain information about the patient's condition, treatment plan, and any further referrals or investigations that may be required.
@@ -22,6 +23,10 @@ clock_start_task:
     A clear "Yes" or "No" answer indicating whether the letter qualifies as a clock start event, along with a brief explanation of the reasoning behind the decision.
     Format your response as markdown without '```'.
   agent: clock_start_analyst
+  allow_delegation: true
+
+
+# Clock Stop Task
 clock_stop_task:
   description: |
    The following is a letter dictated by a hospital clinician to another clinician, typically a general practitioner. The patient is being seen in a hospital service for assessment and/or treatment. However, this letter may not necessarily indicate that a "clock stop event" has occurred as per NHS England RTT guidelines. It may be the first time the patient has been seen in the hospital setting, or it may be a follow-up letter after a previous initial consultation. The letter may also contain information about the patient's condition, treatment plan, and any further referrals or investigations that may be required.
@@ -53,3 +58,4 @@ clock_stop_task:
     A clear "Yes" or "No" answer indicating whether the letter qualifies as a clock stop event, along with a brief explanation of the reasoning behind the decision.
     Format your response as markdown without '```'.
   agent: clock_stop_analyst
+  allow_delegation: true

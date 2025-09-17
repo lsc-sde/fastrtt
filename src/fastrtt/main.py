@@ -5,9 +5,8 @@ import warnings
 from datetime import datetime
 
 from fastrtt.crew import Fastrtt
-import openlit
+from fastrtt.otel import langfuse
 
-openlit.init()
 
 warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
 
@@ -41,10 +40,12 @@ Kind regards.
 Mr. Smith """
     inputs = {"clinic_letter": clinic_letter}
 
-    try:
-        Fastrtt().crew().kickoff(inputs=inputs)
-    except Exception as e:
-        raise Exception(f"An error occurred while running the crew: {e}")
+    with langfuse.start_as_current_span(name="Run_FastRTT"):
+        try:
+            Fastrtt().crew().kickoff(inputs=inputs)
+        except Exception as e:
+            raise Exception(f"An error occurred while running the crew: {e}")
+    langfuse.flush()
 
 
 def train():

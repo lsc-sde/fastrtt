@@ -1,10 +1,17 @@
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
+from crewai.knowledge.source.json_knowledge_source import JSONKnowledgeSource
+
+
 from typing import List
 # If you want to run a snippet of code before or after the crew starts,
 # you can use the @before_kickoff and @after_kickoff decorators
 # https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
+
+json_knowledge = JSONKnowledgeSource(
+    file_path="rtt-guidance-feb-25_sections.json",
+)
 
 
 @CrewBase
@@ -47,7 +54,6 @@ class Fastrtt:
     def clock_stop_task(self) -> Task:
         return Task(
             config=self.tasks_config["clock_stop_task"],  # type: ignore[index]
-            output_file="report.md",
         )
 
     @crew
@@ -61,5 +67,13 @@ class Fastrtt:
             tasks=self.tasks,  # Automatically created by the @task decorator
             process=Process.sequential,
             verbose=True,
+            knowledge_sources=[json_knowledge],
+            embedder={
+                "provider": "ollama",
+                "config": {
+                    "model": "nomic-embed-text:latest",
+                    "url": "http://localhost:11434/api/embeddings",
+                },
+            },
             # process=Process.hierarchical, # In case you wanna use that instead https://docs.crewai.com/how-to/Hierarchical/
         )

@@ -29,6 +29,7 @@ type = "crew"
 
 [dependency-groups]
 dev = [
+    "jupyterlab>=4.4.7",
     "pre-commit>=4.3.0",
     "ruff>=0.13.0",
 ]
