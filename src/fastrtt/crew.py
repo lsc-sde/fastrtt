@@ -10,7 +10,7 @@ from crewai.project import CrewBase, agent, crew, task
 # https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
 
 json_knowledge = JSONKnowledgeSource(
-    file_path="rtt-guidance-feb-25_sections.json",
+    file_paths=["rtt-guidance-feb-25_sections.json"],
 )
 
 
