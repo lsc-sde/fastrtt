@@ -18,25 +18,11 @@ def run():
     """
     Run the crew.
     """
-    clinic_letter = """Dear Doctor,
+    person_id = "3695604"
+    start_date = "2025-01-01"
+    end_date = "2025-12-31"
 
-Thank you for your referral. I saw this pleasant 70 year old man in my clinic today.
-
-He presents with a 1 year history of a lump in his right groin.
-History is typical for a right inguinal hernia. This causes minimal symptoms.
-
-He has had a myocardial infarction 5 years ago and has congestive heart failure.
-His exercise tolerance is limited to 50 yards.
-
-Clinical examination confirmed a easily reducible right inguinal hernia.
-
-In view of his comorbidities and the lack of symptoms, I have advised against surgery.
-He is in agreement with this. I have not made any further arrangements to see him again but will be happy to do so should he become more symptomatic.
-
-Kind regards.
-
-Mr. Smith """
-    inputs = {"clinic_letter": clinic_letter}
+    inputs = {"person_id": person_id, "start_date": start_date, "end_date": end_date}
 
     with langfuse.start_as_current_span(name="Run_FastRTT"):
         try:

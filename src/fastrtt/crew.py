@@ -4,6 +4,8 @@ from crewai import Agent, Crew, Process, Task
 from crewai.agents.agent_builder.base_agent import BaseAgent
 from crewai.knowledge.source.json_knowledge_source import JSONKnowledgeSource
 from crewai.project import CrewBase, agent, crew, task
+from crewai_tools import MCPServerAdapter
+from mcp import StdioServerParameters
 
 # If you want to run a snippet of code before or after the crew starts,
 # you can use the @before_kickoff and @after_kickoff decorators
@@ -27,11 +29,28 @@ class Fastrtt:
 
     # If you would like to add tools to your agents, you can learn more about it here:
     # https://docs.crewai.com/concepts/agents#agent-tools
+
+    mcp_server_params = [
+        StdioServerParameters(
+            command="uv",
+            args=["run", "fastrtt_mcp"],
+        )
+    ]
+
     @agent
-    def clock_start_analyst(self) -> Agent:
+    def data_retrieval_agent(self) -> Agent:
         return Agent(
-            config=self.agents_config["clock_start_analyst"],  # type: ignore[index]
+            config=self.agents_config["data_retrieval_agent"],  # type: ignore[index]
             verbose=False,
+            tools=self.get_mcp_tools(),
+        )
+
+    @agent
+    def data_intent_agent(self) -> Agent:
+        return Agent(
+            config=self.agents_config["data_intent_agent"],  # type: ignore[index]
+            verbose=False,
+            # knowledge_sources=[json_knowledge],  # Temporarily disabled
         )
 
     @agent
@@ -39,15 +58,22 @@ class Fastrtt:
         return Agent(
             config=self.agents_config["clock_stop_analyst"],  # type: ignore[index]
             verbose=False,
+            # knowledge_sources=[json_knowledge],  # Temporarily disabled
         )
 
     # To learn more about structured task outputs,
     # task dependencies, and task callbacks, check out the documentation:
     # https://docs.crewai.com/concepts/tasks#overview-of-a-task
     @task
-    def clock_start_task(self) -> Task:
+    def data_retrieval_task(self) -> Task:
         return Task(
-            config=self.tasks_config["clock_start_task"],  # type: ignore[index]
+            config=self.tasks_config["data_retrieval_task"],  # type: ignore[index]
+        )
+
+    @task
+    def data_intent_task(self) -> Task:
+        return Task(
+            config=self.tasks_config["data_intent_task"],  # type: ignore[index]
         )
 
     @task
@@ -67,13 +93,13 @@ class Fastrtt:
             tasks=self.tasks,  # Automatically created by the @task decorator
             process=Process.sequential,
             verbose=True,
-            knowledge_sources=[json_knowledge],
-            embedder={
-                "provider": "ollama",
-                "config": {
-                    "model": "nomic-embed-text:latest",
-                    "url": "http://localhost:11434/api/embeddings",
-                },
-            },
+            # knowledge_sources=[json_knowledge],
+            # embedder={
+            #     "provider": "ollama",
+            #     "config": {
+            #         "model": "nomic-embed-text:latest",
+            #         "url": "http://localhost:11434/api/embed",
+            #     },
+            # },
             # process=Process.hierarchical, # In case you wanna use that instead https://docs.crewai.com/how-to/Hierarchical/
         )

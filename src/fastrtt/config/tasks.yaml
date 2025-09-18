@@ -1,36 +1,78 @@
-# Clock Start Task
-clock_start_task:
+# Data Retrieval Task
+data_retrieval_task:
   description: |
-    The following is a letter dictated by a hospital clinician to another clinician, typically a general practitioner. The patient has been referred to a hospital service for assessment and/or treatment. However, this letter may not necessarily indicate that a "clock start event" has occurred as per NHS England RTT guidelines. It may be the first time the patient has been seen in the hospital setting, or it may be a follow-up letter after an initial consultation. The letter may also contain information about the patient's condition, treatment plan, and any further referrals or investigations that may be required.
-    Your task is to determine if the information in this letter qualifies as a "clock start event" based on NHS England guidelines.
-    A clock start event is defined as follows:
-    **1)** A waiting time clock starts when any care professional or service permitted by an English NHS commissioner to make such referrals, refers to:
-      a) a consultant-led service, regardless of setting, with the intention that the patient will be assessed and, if appropriate, treated before responsibility is transferred back to the referring health professional or general practitioner;
-      b) an interface or referral management or assessment service, which may result in an onward referral to a consultant-led service before responsibility is transferred back to the referring health professional or general practitioner.
-
-    **2)** A waiting time clock also starts upon a self-referral by a patient to the above services, where these pathways have been agreed locally by commissioners and providers and once the referral is ratified by a care professional permitted to do so.
-
-    **3)** Upon completion of a consultant-led referral to treatment period, a new waiting time clock only starts:
-      a) when a patient becomes fit and ready for the second of a consultant-led bilateral procedure;
-      b) upon the decision to start a substantively new or different treatment that does not already form part of that patient's agreed care plan;
-      c) upon a patient being re-referred into a consultant-led; interface; or referral management or assessment service as a new referral;
-      d) when a decision to treat is made following a period of active monitoring;
-      e) when a patient rebooks their appointment following a first appointment Did Not Attend (DNA) that stopped and nullified their earlier clock.
-
-    Clinic Letter:
-    {clinic_letter}
+    Given a patient identifier, a start date and optionally an end date (which defaults to today if not provided),
+    use your tools to retrieve patient data from the database. Reformat this data in a manner suitable for 
+    other agents to use for interpeting where on the Referral to Treament pathway the patient is.
+    Do not make any interpretations yourself. Do not generate any data yourself.
+    Only use the data provided by the database.
+    If no data is found, return an empty JSON array: []
+    
+    Patient Identifier: {person_id}
+    Start Date: {start_date}
+    End Date: {end_date}
   expected_output: |
-    A clear "Yes" or "No" answer indicating whether the letter qualifies as a clock start event, along with a brief explanation of the reasoning behind the decision.
-    Format your response as markdown without '```'.
-  agent: clock_start_analyst
+    A JSON array of notes as returned by the database but with improved formatting. 
+    It should be ordered by date with the oldest notes appearing first.
+    eg. 
+        "note_date": "2023-10-01",
+        "note_text": "Original note text here...",
+        "department": "Cardiology",
+        "note_type": "Clinic Letter"
+
+    If no data is found, return an empty JSON array: []
+    
+  agent: data_retrieval_agent
+  
+
+# Clock Start Task
+data_intent_task:
+  description: |
+    You will receive a JSON array of patient notes and related information. 
+    These will be ordered by date. These will contain a variety of information including clinic letters, EHR notes, test results and other information. 
+    Some of these notes will be clinic letters dictated by a hospital clinician to another clinician, typically a general practitioner. The patient is being seen in a hospital service for assessment and/or treatment. 
+    Your task is to determine the intent in these letters based on NHS England RTT guidelines.
+    **Note**: Not all letters will indicate that a "clock start event" or a "clock stop event" has occurred as per NHS England RTT guidelines. Some letters may be follow-up letters after a previous initial consultation, others may contain information about the patient's condition, treatment plan, and any further referrals or investigations that may be required. Some maybe unrelated to RTT entirely or notes made in the EHR by administrative staff. 
+
+    You will determine the intent of these letters and will classify them as one of the following:
+    - Discharged to GP
+    - Referred to another consultant or service
+    - Active monitoring started
+    - Active monitoring continued
+    - Added to waiting list for a procedure
+    - investigations or tests ordered
+
+    A letter may contain multiple intents. If you are unsure, use your best judgement based on the content of the letter and the context provided by previous letters. You may return more than one intent per letter. If there is no clear intent, return "No clear intent".
+
+
+    
+  expected_output: |
+    A JSON array of objects, each containing the original note and an array of identified intents. 
+    For example:
+    [
+      {
+        "note_date": "2023-10-01",
+        "note_id": "12345",
+        "note_text": "Original note text here...",
+        "department": "Cardiology",
+        "note_type": "Clinic Letter",
+        "intents": ["Referred to another consultant or service", "Investigations or tests ordered"]
+      },
+      ...
+    ]
+  agent: data_intent_agent
   allow_delegation: true
 
 
 # Clock Stop Task
 clock_stop_task:
   description: |
-   The following is a letter dictated by a hospital clinician to another clinician, typically a general practitioner. The patient is being seen in a hospital service for assessment and/or treatment. However, this letter may not necessarily indicate that a "clock stop event" has occurred as per NHS England RTT guidelines. It may be the first time the patient has been seen in the hospital setting, or it may be a follow-up letter after a previous initial consultation. The letter may also contain information about the patient's condition, treatment plan, and any further referrals or investigations that may be required.
-    Your task is to determine if the information in this letter qualifies as a "clock stop event" based on NHS England guidelines.
+    Your task is to determine if the information provided has any evidence that qualifies as a "clock stop event" based on NHS England guidelines.
+    You will receive a json array of patient notes and related information. These will be ordered by date. These will contain a variety of information including clinic letters, EHR notes, test results and other information. Some of these notes will be clinic letters dictated by a hospital clinician to another clinician, typically a general practitioner. The patient is being seen in a hospital service for assessment and/or treatment.
+    These will also have one or more identified intents as classified by the data intent agent.
+    Your task is to determine if any of these letters qualify as a "clock stop event" based on NHS England RTT guidelines.
+    **Note**: Not all letters will indicate that a "clock stop event" has occurred as per NHS England RTT guidelines. Some letters may be follow-up letters after a previous initial consultation, others may contain information about the patient's condition, treatment plan, and any further referrals or investigations that may be required. Some maybe unrelated to RTT entirely or notes made in the EHR by administrative staff.
+    A clock stop event is defined as follows:
     **1)** A clock stops when:
        a) First definitive treatment starts. This could be:
           i. Treatment provided by an interface service;
@@ -52,10 +94,22 @@ clock_stop_task:
           iii. discharging the patient is carried out according to local, publicly available/published, policies on DNAs;
           iv. These local policies are clearly defined and specifically protect the clinical interests of vulnerable patients (e.g. children) and are agreed with clinicians, commissioners, patients and other relevant stakeholders.
 
-    Clinic Letter:
-    {clinic_letter}
+    
   expected_output: |
-    A clear "Yes" or "No" answer indicating whether the letter qualifies as a clock stop event, along with a brief explanation of the reasoning behind the decision.
-    Format your response as markdown without '```'.
+    A clear "Yes" or "No" answer indicating whether any of the letters qualifies as a clock stop event, along with a brief explanation of the reasoning behind the decision.
+    Return a JSON array of objects, each containing the original note, identified intents and whether it qualifies as a clock stop event.
+    For example:
+    [
+      {
+        "note_date": "2023-10-01",
+        "note_id": "12345",
+        "note_text": "Original note text here...",
+        "department": "Cardiology",
+        "note_type": "Clinic Letter",
+        "intents": ["Referred to another consultant or service", "Investigations or tests ordered"],
+        "clock_stop_event": "No"
+      },
+      ...
+    ]
   agent: clock_stop_analyst
   allow_delegation: true
